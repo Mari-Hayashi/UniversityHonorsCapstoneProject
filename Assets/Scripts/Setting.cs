@@ -5,38 +5,56 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 
-public enum Music {no_music = 0, silend_music, loud_music }
+public enum Music {no_music = 0, binaural_beat, mozart }
+public enum TaskType { Attention, Memorization, Calculation }
 [System.Serializable]
 public class Setting : MonoBehaviour
 {
     [SerializeField]
-    private Text music_button_text;
+    private Text no_music_button;
+    private const string no_music_text = "No Music";
     [SerializeField]
-    private Text input_field_text;
+    private Text binaural_beat_button;
+    private const string binaural_beat_text = "Binaural";
+    [SerializeField]
+    private Text mozart_button;
+    private const string mozart_text = "Mozart";
 
-    public static Music music = Music.no_music;
-    public static int session_length = 30;
+    [SerializeField]
+    private Text attention_button;
+    private const string attention_text = "Attention";
+    [SerializeField]
+    private Text memorization_button;
+    private const string memorization_text = "Memorization";
+    [SerializeField]
+    private Text calculation_button;
+    private const string calculation_text = "Calculation";
+
+    public static Session session;
+
 
     AudioSource audioSource;
 
-    public static string fileName(string playerName, string taskName)
+    public static string fileName(string playerName, int taskNumber)
     {
         string musicString;
-        switch (music)
+        switch (session.tasks[taskNumber].music)
         {
             case Music.no_music:
                 musicString = "NoMusic";
                 break;
-            case Music.silend_music:
-                musicString = "SilentMusic";
+            case Music.binaural_beat:
+                musicString = "BinauralBeat";
                 break;
-            case Music.loud_music:
-                musicString = "LoudMusic";
+            case Music.mozart:
+                musicString = "Mozart";
                 break;
             default:
                 musicString = "MusicUnspecified";
                 break;
         }
+        string taskName = session.getSceneName(taskNumber);
+
         string date = DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString();
 
         Debug.Log(Application.persistentDataPath);
@@ -46,47 +64,132 @@ public class Setting : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        session = new Session();
     }
 
-    public void MusicButtonPressed()
+    public void MusicButtonPressed(Music type)
     {
         audioSource.Play();
-        if ((int)music < 2) music++;
-        else music = 0;
+        session.addMusicType(type);
 
-        switch (music)
+        switch (type)
         {
             case Music.no_music:
-                music_button_text.text = "No Music";
+                no_music_button.text = no_music_text + " (" + session.currentMusicIndex + ")";
                 break;
-            case Music.silend_music:
-                music_button_text.text = "Silent Music";
+            case Music.binaural_beat:
+                binaural_beat_button.text = binaural_beat_text + " (" + session.currentMusicIndex + ")";
                 break;
-            case Music.loud_music:
-                music_button_text.text = "Loud Music";
+            case Music.mozart:
+                mozart_button.text = mozart_text + " (" + session.currentMusicIndex + ")";
                 break;
         }
     }
 
-    public void OkButtonPressed()
-    {  
+    public void TaskButtonPressed(int type)
+    {
         audioSource.Play();
-        if (input_field_text.text == "")
-        {
-            session_length = 30;
-            SceneManager.LoadScene("Title");
-        }
+        session.addTaskType((TaskType)type);
 
-        int number;
-        if (!int.TryParse(input_field_text.text, out number) || number <= 0)
+        switch ((TaskType)type)
         {
-            input_field_text.text = "";
-        }
-        else
-        {
-            session_length = number;
-            SceneManager.LoadScene("Title");
+            case TaskType.Attention:
+                attention_button.text = attention_text + " (" + session.currentTaskIndex + ")";
+                break;
+            case TaskType.Calculation:
+                calculation_button.text = calculation_text + " (" + session.currentTaskIndex + ")";
+                break;
+            case TaskType.Memorization:
+                memorization_button.text = memorization_text + " (" + session.currentTaskIndex + ")";
+                break;
         }
     }
 
+    public void ResetButtonPressed()
+    {
+        audioSource.Play();
+        no_music_button.text = no_music_text;
+        binaural_beat_button.text = binaural_beat_text;
+        mozart_button.text = mozart_text;
+        attention_button.text = attention_text;
+        calculation_button.text = calculation_text;
+        memorization_button.text = memorization_text;
+        session.Clear();
+    }
+
+    public void OKButtonPressed()
+    {
+        audioSource.Play();
+        // Go to the first session.
+    }
+
+}
+
+public class Session
+{
+    public List<Task> tasks;
+    public int currentTaskIndex;
+    public int currentMusicIndex;
+
+    public Session()
+    {
+        Task emptyTask = new Task();
+        tasks = new List<Task>();
+        tasks.Add(emptyTask);
+        tasks.Add(emptyTask);
+        tasks.Add(emptyTask);
+        currentTaskIndex = 0;
+        currentMusicIndex = 0;
+    }
+
+    public void Clear()
+    {
+        tasks.Clear();
+        Task emptyTask = new Task();
+        tasks = new List<Task>();
+        tasks.Add(emptyTask);
+        tasks.Add(emptyTask);
+        tasks.Add(emptyTask);
+        currentTaskIndex = 0;
+        currentMusicIndex = 0;
+    }
+
+    public void addTaskType(TaskType type)
+    {
+        if (currentTaskIndex == 3) return;
+
+        tasks[currentTaskIndex].taskType = type;
+        currentTaskIndex++;
+    }
+
+    public void addMusicType(Music type)
+    {
+        if (currentTaskIndex == 3) return;
+
+        tasks[currentMusicIndex].music = type;
+        currentMusicIndex++;
+    }
+
+    public string getSceneName(int taskNumber)
+    {
+        TaskType type = tasks[taskNumber + 1].taskType;
+
+        switch (type)
+        {
+            case TaskType.Attention:
+                return "Attention";
+            case TaskType.Calculation:
+                return "Calculation";
+            case TaskType.Memorization:
+                return "Memorization";
+        }
+
+        return "";
+    }
+}
+
+public class Task
+{
+    public TaskType taskType;
+    public Music music;
 }

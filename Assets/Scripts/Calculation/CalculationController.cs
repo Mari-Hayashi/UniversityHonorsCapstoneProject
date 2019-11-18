@@ -59,12 +59,12 @@ public class CalculationController : Singleton<CalculationController>
 
     public void init()
     {
-        SessionLength = Setting.session_length;
+        SessionLength = 10;
         gameGoingOn = true;
         curSection = 0;
         initialTime = Time.realtimeSinceStartup;
         produceProblems();
-        fileinfo = new FileInfo(Setting.fileName(playerName, "Calculation"));
+        fileinfo = new FileInfo(Setting.fileName(playerName, 1));// fix
         streamwriter = fileinfo.AppendText();
         streamwriter.WriteLine(DescriptionString);
         streamwriter.WriteLine(OperationDescription);

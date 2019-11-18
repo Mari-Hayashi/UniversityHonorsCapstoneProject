@@ -73,9 +73,9 @@ public class AttentionController : Singleton<AttentionController>
 
     public void init()
     {
-        sessionLength = Setting.session_length;
+        sessionLength = 10;
         audioSource = GetComponent<AudioSource>();
-        fileinfo = new FileInfo(Setting.fileName(playerName, "Attention"));
+        fileinfo = new FileInfo(Setting.fileName(playerName, 1)); // fix
         streamwriter = fileinfo.AppendText();
         streamwriter.WriteLine(DescriptionString);
         streamwriter.WriteLine(FruitDescriptionString);

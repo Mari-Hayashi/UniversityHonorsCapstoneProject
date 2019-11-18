@@ -90,7 +90,7 @@ public class MemorizationController : Singleton<MemorizationController>
 
     public void init()
     {
-        sessionLength = Setting.session_length;
+        sessionLength = 10;
         numImages = new int[6];
         for (int i = 0; i < 6; ++i) numImages[i] = 0;
 
@@ -110,7 +110,7 @@ public class MemorizationController : Singleton<MemorizationController>
         ShuffleQuestionList();
         Debug.Log(QuestionList[1].choicesString());
 
-        fileinfo = new FileInfo(Setting.fileName(playerName, "Memorization"));
+        fileinfo = new FileInfo(Setting.fileName(playerName, 10)); // fix
         streamwriter = fileinfo.AppendText();
         streamwriter.WriteLine(DescriptionString);
 

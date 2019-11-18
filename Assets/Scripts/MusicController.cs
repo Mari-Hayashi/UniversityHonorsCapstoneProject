@@ -12,17 +12,19 @@ public class MusicController : MonoBehaviour
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        switch (Setting.music)
+        audioSource = GetComponent<AudioSource>(); // TODO: Fix below
+        /*
+        switch (Setting.m)
         {
-            case Music.silend_music:
+            case Music.binaural_beat:
                 audioSource.clip = loud_music;
                 audioSource.Play();
                 break;
-            case Music.loud_music:
+            case Music.mozart:
                 audioSource.clip = silent_music;
                 audioSource.Play();
                 break;
         }
+        */
     }
 }
