@@ -110,7 +110,7 @@ public class MemorizationController : Singleton<MemorizationController>
         ShuffleQuestionList();
         Debug.Log(QuestionList[1].choicesString());
 
-        fileinfo = new FileInfo(Setting.fileName(playerName, 10)); // fix
+        fileinfo = new FileInfo(Setting.fileName()); // fix
         streamwriter = fileinfo.AppendText();
         streamwriter.WriteLine(DescriptionString);
 
@@ -131,7 +131,7 @@ public class MemorizationController : Singleton<MemorizationController>
     {
         for (int curIndex = 0; curIndex < CurrentQuestion.numSprites; ++curIndex) {
             indexText.text = (curIndex + 1).ToString() + " / " + CurrentQuestion.numSprites.ToString();
-            spriteDisplay.overrideSprite = CurrentQuestion.getDisplaySprite(curIndex);
+            spriteDisplay.sprite = CurrentQuestion.getDisplaySprite(curIndex);
             yield return new WaitForSeconds(displayInterval);
         }
         DisplayChoices();
@@ -415,11 +415,7 @@ public class MemorizationController : Singleton<MemorizationController>
         streamwriter.Close();
         Debug.Log("Information written");
         end = true;
-        for (int i = 0; i < numChoices; ++i)
-        {
-            choiceButtons[i].sprite = null;
-        }
-        questionText.text = endString;
+        Setting.goToNextScene();
     }
     private void writeOnLog()
     {

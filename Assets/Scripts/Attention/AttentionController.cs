@@ -73,9 +73,9 @@ public class AttentionController : Singleton<AttentionController>
 
     public void init()
     {
-        sessionLength = 10;
+        sessionLength = Setting.eachTaskLength;
         audioSource = GetComponent<AudioSource>();
-        fileinfo = new FileInfo(Setting.fileName(playerName, 1)); // fix
+        fileinfo = new FileInfo(Setting.fileName());
         streamwriter = fileinfo.AppendText();
         streamwriter.WriteLine(DescriptionString);
         streamwriter.WriteLine(FruitDescriptionString);
@@ -167,7 +167,7 @@ public class AttentionController : Singleton<AttentionController>
         streamwriter.Flush();
         streamwriter.Close();
         gameGoingOn = false;
-        GameDoneTxt.SetActive(true);
+        Setting.goToNextScene();
     }
     private void writeCSV()
     {

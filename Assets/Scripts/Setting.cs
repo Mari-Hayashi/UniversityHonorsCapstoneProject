@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 using System;
 
 public enum Music {no_music = 0, binaural_beat, mozart }
-public enum TaskType { Attention, Memorization, Calculation }
+public enum TaskType { Attention = 0, Memorization, Calculation }
 [System.Serializable]
-public class Setting : MonoBehaviour
+public class Setting : Singleton<Setting>
 {
     [SerializeField]
     private Text no_music_button;
@@ -31,13 +31,19 @@ public class Setting : MonoBehaviour
     private const string calculation_text = "Calculation";
 
     public static Session session;
+    public static string playerName;
 
+    public static int currentTask = 0;
 
     AudioSource audioSource;
 
-    public static string fileName(string playerName, int taskNumber)
+    public const int eachTaskLength = 10; // minutes
+
+    public static string fileName()
     {
         string musicString;
+        int taskNumber = currentTask - 1; // (0, 1, 2)
+        if (session == null || session.tasks.Count < 1) return "test";
         switch (session.tasks[taskNumber].music)
         {
             case Music.no_music:
@@ -67,9 +73,10 @@ public class Setting : MonoBehaviour
         session = new Session();
     }
 
-    public void MusicButtonPressed(Music type)
+    public void MusicButtonPressed(int typeInt)
     {
         audioSource.Play();
+        Music type = (Music)typeInt;
         session.addMusicType(type);
 
         switch (type)
@@ -120,9 +127,21 @@ public class Setting : MonoBehaviour
     public void OKButtonPressed()
     {
         audioSource.Play();
-        // Go to the first session.
+        SceneManager.LoadScene("Name");
     }
 
+    public static void goToNextScene()
+    {
+        if (currentTask < 3)
+        {
+            SceneManager.LoadScene(session.getSceneName(currentTask));
+            currentTask++;
+        }
+        else
+        {
+            SceneManager.LoadScene("Title");
+        }
+    }
 }
 
 public class Session
@@ -133,11 +152,7 @@ public class Session
 
     public Session()
     {
-        Task emptyTask = new Task();
         tasks = new List<Task>();
-        tasks.Add(emptyTask);
-        tasks.Add(emptyTask);
-        tasks.Add(emptyTask);
         currentTaskIndex = 0;
         currentMusicIndex = 0;
     }
@@ -145,11 +160,6 @@ public class Session
     public void Clear()
     {
         tasks.Clear();
-        Task emptyTask = new Task();
-        tasks = new List<Task>();
-        tasks.Add(emptyTask);
-        tasks.Add(emptyTask);
-        tasks.Add(emptyTask);
         currentTaskIndex = 0;
         currentMusicIndex = 0;
     }
@@ -158,21 +168,33 @@ public class Session
     {
         if (currentTaskIndex == 3) return;
 
+        if (tasks.Count <= currentTaskIndex)
+        {
+            Task newTask = new Task();
+            tasks.Add(newTask);
+        }
+
         tasks[currentTaskIndex].taskType = type;
         currentTaskIndex++;
     }
 
     public void addMusicType(Music type)
     {
-        if (currentTaskIndex == 3) return;
+        if (currentMusicIndex == 3) return;
 
+        if (tasks.Count <= currentMusicIndex)
+        {
+            Task newTask = new Task();
+            tasks.Add(newTask);
+        }
+        
         tasks[currentMusicIndex].music = type;
         currentMusicIndex++;
     }
 
     public string getSceneName(int taskNumber)
     {
-        TaskType type = tasks[taskNumber + 1].taskType;
+        TaskType type = tasks[taskNumber].taskType;
 
         switch (type)
         {

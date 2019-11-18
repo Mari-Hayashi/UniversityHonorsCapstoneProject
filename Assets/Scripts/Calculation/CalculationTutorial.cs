@@ -6,15 +6,11 @@ using UnityEngine.UI;
 
 public class CalculationTutorial : MonoBehaviour
 {
-    private enum currentScreen {Title = 0, Name, Explain, Practice1, Practice2, Practice3, Result, Countdown};
+    private enum currentScreen {Title = 0, Explain, Practice1, Practice2, Practice3, Result, Countdown};
     [SerializeField]
     private TextMesh explanationTxt;
     [SerializeField]
     private TextMesh Calculationtxt;
-    [SerializeField]
-    private GameObject inputField;
-    [SerializeField]
-    private Text inputText;
     [SerializeField]
     private GameObject[] buttons;
     private Text[] buttonTexts;
@@ -22,7 +18,6 @@ public class CalculationTutorial : MonoBehaviour
     private GameObject mainGameObjects;
 
     private const string TitleStr = "CALCULATION";
-    private const string TypeNameStr = "Please type\nyour name";
     private const string ExplainStr = "Answer calculations\nas quick and\nas accurate\nas possible.";
     private const string ResultStr1 = "You got ";
     private const string ResultStr2 = "/3 correct!\nNow, we will\nget started.";
@@ -38,7 +33,6 @@ public class CalculationTutorial : MonoBehaviour
     void Start()
     {
         currentscreen = currentScreen.Title;
-        inputField.SetActive(false);
         numCorrect = 0;
 
         practiceCalculations = new Calculation[3];
@@ -70,10 +64,6 @@ public class CalculationTutorial : MonoBehaviour
     {
         switch (currentscreen)
         {
-            case currentScreen.Name:
-                explanationTxt.text = TypeNameStr;
-                buttonTexts[1].text = "OK";
-                break;
             case currentScreen.Explain:
                 explanationTxt.text = ExplainStr;
                 buttonTexts[1].text = "Practice";
@@ -108,12 +98,7 @@ public class CalculationTutorial : MonoBehaviour
     }
     public void topButton()
     {
-        audioSource.Play();
-        // Only displayed in the initial screen
-        currentscreen = currentScreen.Name;
-        inputField.SetActive(true);
-        buttons[0].SetActive(false);
-        changeTexts();
+        StartCoroutine(GameBegin());
     }
 
     public void bottomButton()
@@ -121,34 +106,26 @@ public class CalculationTutorial : MonoBehaviour
         audioSource.Play();
         switch (currentscreen) {
             case currentScreen.Title:
-                SceneManager.LoadScene("Title");break;
-            case currentScreen.Name:
-                if (inputText.text == "")
-                {
-                    explanationTxt.text = "Name cannot\nbe empty.";
-                }
-                else
-                {
-                    CalculationController.playerName = inputText.text;
-                    currentscreen = currentScreen.Explain;
-                    inputField.SetActive(false);
-                    changeTexts();
-                }
+                audioSource.Play();
+                buttons[0].SetActive(false);
+                currentscreen = currentScreen.Explain;
+                changeTexts();
                 break;
             case currentScreen.Explain:
                 currentscreen = currentScreen.Practice1;
                 changeTexts();
                 break;
             case currentScreen.Result:
-                currentscreen = currentScreen.Countdown;
-                buttons[1].SetActive(false);
-                StartCoroutine("CountDown");
+                StartCoroutine(GameBegin());
                 break;
             default: break;
         }
     }
-    IEnumerator CountDown()
+    IEnumerator GameBegin()
     {
+        currentscreen = currentScreen.Countdown;
+        buttons[1].SetActive(false);
+        buttons[0].SetActive(false);
         explanationTxt.text = 3.ToString();
         audioSource.Play();
         yield return new WaitForSeconds(1f);

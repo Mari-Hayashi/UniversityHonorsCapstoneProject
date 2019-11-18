@@ -6,17 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class MemorizationTutorial : MonoBehaviour
 {
-    private enum currentScreen { Title = 0, Name, Explain, Practice, Result, Countdown };
+    private enum currentScreen { Title = 0, Explain, Practice, Result, Countdown };
     [SerializeField]
     private TextMesh explanationTxt;
     [SerializeField]
     private TextMesh IndexText;
     [SerializeField]
     private SpriteRenderer displaySprite;
-    [SerializeField]
-    private GameObject inputField;
-    [SerializeField]
-    private Text inputText;
     [SerializeField]
     private GameObject[] buttons; // 2
     private Text[] buttonTexts;
@@ -32,7 +28,6 @@ public class MemorizationTutorial : MonoBehaviour
     private GameObject choiceButtons;
 
     private const string TitleStr = "MEMORIZATION";
-    private const string TypeNameStr = "Please type\nyour name";
     private const string ExplainStr = "Memorize images\nand ordering.";
     private const string ResultCorrect = "You got it correct!\nNow, we will\nget started.";
     private const string ResultWrong = "You got it wrong!\nLet's try again.";
@@ -50,7 +45,6 @@ public class MemorizationTutorial : MonoBehaviour
     void Start()
     {
         currentscreen = currentScreen.Title;
-        inputField.SetActive(false);
         mainGameObjects.SetActive(false);
 
         buttonTexts = new Text[2];
@@ -62,10 +56,6 @@ public class MemorizationTutorial : MonoBehaviour
     {
         switch (currentscreen)
         {
-            case currentScreen.Name:
-                explanationTxt.text = TypeNameStr;
-                buttonTexts[1].text = "OK";
-                break;
             case currentScreen.Explain:
                 explanationTxt.text = ExplainStr;
                 buttonTexts[1].text = "Practice";
@@ -88,12 +78,7 @@ public class MemorizationTutorial : MonoBehaviour
     }
     public void topButton()
     {
-        audioSource.Play();
-        // Only displayed in the initial screen
-        currentscreen = currentScreen.Name;
-        inputField.SetActive(true);
-        buttons[0].SetActive(false);
-        changeTexts();
+        StartCoroutine(GameBegin());
     }
 
     public void bottomButton()
@@ -102,19 +87,10 @@ public class MemorizationTutorial : MonoBehaviour
         switch (currentscreen)
         {
             case currentScreen.Title:
-                SceneManager.LoadScene("Title"); break;
-            case currentScreen.Name:
-                if (inputText.text == "")
-                {
-                    explanationTxt.text = "Name cannot\nbe empty.";
-                }
-                else
-                {
-                    MemorizationController.playerName = inputText.text;
-                    currentscreen = currentScreen.Explain;
-                    inputField.SetActive(false);
-                    changeTexts();
-                }
+                audioSource.Play();
+                currentscreen = currentScreen.Explain;
+                buttons[0].SetActive(false);
+                changeTexts();
                 break;
             case currentScreen.Explain:
                 currentscreen = currentScreen.Practice;
@@ -124,9 +100,7 @@ public class MemorizationTutorial : MonoBehaviour
                 StartCoroutine(Practice());
                 break;
             case currentScreen.Result:
-                currentscreen = currentScreen.Countdown;
-                buttons[1].SetActive(false);
-                StartCoroutine("CountDown");
+                StartCoroutine(GameBegin());
                 break;
             default: break;
         }
@@ -148,8 +122,11 @@ public class MemorizationTutorial : MonoBehaviour
         practiceGameObject_Display.SetActive(false);
         choiceButtonsSetActive(true);
     }
-    IEnumerator CountDown()
+    IEnumerator GameBegin()
     {
+        currentscreen = currentScreen.Countdown;
+        buttons[0].SetActive(false);
+        buttons[1].SetActive(false);
         explanationTxt.text = 3.ToString();
         audioSource.Play();
         yield return new WaitForSeconds(1f);

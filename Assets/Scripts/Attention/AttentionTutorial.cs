@@ -6,17 +6,12 @@ using UnityEngine.SceneManagement;
 
 public class AttentionTutorial : MonoBehaviour
 {
-    private enum currentScreen { Title = 0, Name, ExplainApple, ExplainOrder, PracticeApple, ResultApple, Explainorange, PracticeOrange, ResultOrange, Countdown };
+    private enum currentScreen { Title = 0, ExplainApple, ExplainOrder, PracticeApple, ResultApple, Explainorange, PracticeOrange, ResultOrange, Countdown };
 
     [SerializeField]
     private TextMesh explanationTxt;
     [SerializeField]
     private GameObject explanationScreen;
-
-    [SerializeField]
-    private GameObject inputField;
-    [SerializeField]
-    private Text inputText;
 
     [SerializeField]
     private GameObject sampleApple;
@@ -44,7 +39,6 @@ public class AttentionTutorial : MonoBehaviour
     private currentScreen currentscreen;
 
     private const string TitleStr = "ATTENTION";
-    private const string TypeNameStr = "Please type\nyour name.";
     private const string ExplainAppleStr = "Tap Only Red and\nRight Angle\nApples.";
     private const string ExplainTapOrderStr = "You can only\ntap from top\nto bottom.";
     private const string ExplainOrangeStr = "Next, Tap Only\nUpside down\nOranges.";
@@ -73,10 +67,6 @@ public class AttentionTutorial : MonoBehaviour
     {
         switch (currentscreen)
         {
-            case currentScreen.Name:
-                explanationTxt.text = TypeNameStr;
-                buttonTexts[1].text = "OK";
-                break;
             case currentScreen.ExplainApple:
                 explanationTxt.text = ExplainAppleStr;
                 buttonTexts[1].text = "Next";
@@ -104,32 +94,27 @@ public class AttentionTutorial : MonoBehaviour
 
     public void topButton()
     {
-        audioSource.Play();
-        // Only displayed in the initial screen
-        currentscreen = currentScreen.Name;
-        inputField.SetActive(true);
-        buttons[0].SetActive(false);
-        changeTexts();
+        StartGame();
     }
 
+    public void StartGame()
+    {
+        currentscreen = currentScreen.Countdown;
+        buttons[0].SetActive(false);
+        buttons[1].SetActive(false);
+        StartCoroutine("CountDown");
+    }
     public void bottomButton()
     {
         audioSource.Play();
         switch (currentscreen)
         {
             case currentScreen.Title:
-                SceneManager.LoadScene("Title"); break;
-            case currentScreen.Name:
-                if (inputText.text == "")
-                {
-                    explanationTxt.text = NameEmptyString;
-                    break;
-                }
+                audioSource.Play();
                 currentscreen = currentScreen.ExplainApple;
-                AttentionController.playerName = inputText.text;
-                changeTexts();
-                inputField.SetActive(false);
+                buttons[0].SetActive(false);
                 sampleApple.SetActive(true);
+                changeTexts();
                 break;
             case currentScreen.ExplainApple:
                 currentscreen = currentScreen.ExplainOrder;
@@ -149,9 +134,7 @@ public class AttentionTutorial : MonoBehaviour
                 setPracticeScreenActive(true);
                 break;
             case currentScreen.ResultOrange:
-                currentscreen = currentScreen.Countdown;
-                buttons[1].SetActive(false);
-                StartCoroutine("CountDown");
+                StartGame();
                 break;
             default:
                 break;

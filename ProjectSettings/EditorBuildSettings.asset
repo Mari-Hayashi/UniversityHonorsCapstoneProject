@@ -9,6 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Title.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
+    path: Assets/Scenes/Setting.unity
+    guid: aa7e0033a8cc1b844aa58194b0832569
+  - enabled: 1
+    path: Assets/Scenes/Name.unity
+    guid: 2d63670c4aa6d534f844cc33903ae9d8
+  - enabled: 1
     path: Assets/Scenes/Attention.unity
     guid: 2d36dff8359b6ad42b0a77cd741ad949
   - enabled: 1
@@ -17,7 +23,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Memorization.unity
     guid: a32d8c745b47e4f4784b98bc77fb4eb6
-  - enabled: 1
-    path: Assets/Scenes/Setting.unity
-    guid: aa7e0033a8cc1b844aa58194b0832569
   m_configObjects: {}

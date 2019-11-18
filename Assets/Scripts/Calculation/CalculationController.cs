@@ -64,7 +64,7 @@ public class CalculationController : Singleton<CalculationController>
         curSection = 0;
         initialTime = Time.realtimeSinceStartup;
         produceProblems();
-        fileinfo = new FileInfo(Setting.fileName(playerName, 1));// fix
+        fileinfo = new FileInfo(Setting.fileName());// fix
         streamwriter = fileinfo.AppendText();
         streamwriter.WriteLine(DescriptionString);
         streamwriter.WriteLine(OperationDescription);
@@ -146,10 +146,8 @@ public class CalculationController : Singleton<CalculationController>
         streamwriter.Flush();
         streamwriter.Close();
         functiontext.text = "";
-        Debug.Log("Outputted to: " + fileinfo.FullName);
-        englishText.text = "Your session is done!";
-        for (int i = 0; i < numChoices; ++i) buttons[i].text = "";
         gameGoingOn = false;
+        Setting.goToNextScene();
     }
     /// --------------------- HELPERS ----------------------- ///
     private void produceAdditions()
