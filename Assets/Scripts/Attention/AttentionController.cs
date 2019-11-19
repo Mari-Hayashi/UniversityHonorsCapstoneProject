@@ -85,12 +85,12 @@ public class AttentionController : Singleton<AttentionController>
         sessionNum = 0;
         gameGoingOn = true;
         startSession();
+        MusicController.instance.musicStart();
         StartCoroutine(GameBody());
     }
 
     private void displayQuestion()
     {
-        if (imageSetter == null) Debug.Log("HITOSHI");
         imageSetter.SetImages(questionList[curQuestionIndex].ImageString);
     }
     private void shuffleQuestions()
@@ -150,7 +150,6 @@ public class AttentionController : Singleton<AttentionController>
     private void startSession()
     {
         sessionNum++;
-        Debug.Log("Session " + sessionNum.ToString());
         readCSV();
         shuffleQuestions();
         curQuestionIndex = 0;

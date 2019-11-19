@@ -90,7 +90,7 @@ public class MemorizationController : Singleton<MemorizationController>
 
     public void init()
     {
-        sessionLength = 10;
+        sessionLength = Setting.eachTaskLength;
         numImages = new int[6];
         for (int i = 0; i < 6; ++i) numImages[i] = 0;
 
@@ -119,6 +119,8 @@ public class MemorizationController : Singleton<MemorizationController>
         timeAtBeginningOfSession = Time.realtimeSinceStartup;
         DisplayQuestion();
         audioSource = GetComponent<AudioSource>();
+
+        MusicController.instance.musicStart();
     }
 
     private void DisplayQuestion()
@@ -131,7 +133,7 @@ public class MemorizationController : Singleton<MemorizationController>
     {
         for (int curIndex = 0; curIndex < CurrentQuestion.numSprites; ++curIndex) {
             indexText.text = (curIndex + 1).ToString() + " / " + CurrentQuestion.numSprites.ToString();
-            spriteDisplay.sprite = CurrentQuestion.getDisplaySprite(curIndex);
+            spriteDisplay.overrideSprite = CurrentQuestion.getDisplaySprite(curIndex);
             yield return new WaitForSeconds(displayInterval);
         }
         DisplayChoices();
@@ -152,8 +154,6 @@ public class MemorizationController : Singleton<MemorizationController>
         answeringScreen_texts.SetActive(b);
         showingScreen.SetActive(!b);
         spriteDisplayObj.SetActive(!b);
-        if (b) Debug.Log("Sprite display off");
-        else Debug.Log("Sprite display on");
     }
     private void PopulateQuestionList()
     {
@@ -409,14 +409,18 @@ public class MemorizationController : Singleton<MemorizationController>
         reader.Close();
         Debug.Log("CSV read done.");
     }
+
     private void done()
     {
-        streamwriter.Flush();
-        streamwriter.Close();
-        Debug.Log("Information written");
+        if (streamwriter != null)
+        {
+            streamwriter.Flush();
+            streamwriter.Close();
+        }
         end = true;
         Setting.goToNextScene();
     }
+
     private void writeOnLog()
     {
         float timeSinceBeginning = Time.realtimeSinceStartup - timeAtBeginningOfSession;
@@ -439,6 +443,7 @@ public class MemorizationController : Singleton<MemorizationController>
             CurrentQuestion.spritesString()
          );
     }
+
     private void loadSession()
     {
         Debug.Log("Go to next session");
@@ -465,13 +470,11 @@ public class MemorizationController : Singleton<MemorizationController>
 
     private new void OnApplicationQuit()
     {
-        Debug.Log("Application is terminated.");
         done();
     }
 
     private void OnApplicationPause()
     {
-        Debug.Log("Application is terminated.");
         done();
     }
 }

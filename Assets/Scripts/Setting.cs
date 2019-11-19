@@ -37,7 +37,7 @@ public class Setting : Singleton<Setting>
 
     AudioSource audioSource;
 
-    public const int eachTaskLength = 10; // minutes
+    public const int eachTaskLength = 1; // minutes
 
     public static string fileName()
     {
@@ -61,10 +61,8 @@ public class Setting : Singleton<Setting>
         }
         string taskName = session.getSceneName(taskNumber);
 
-        string date = DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString();
-
         Debug.Log(Application.persistentDataPath);
-        return Application.persistentDataPath + "/" + playerName + "-" + taskName + "-" + musicString  + "-" + date + ".csv";
+        return Application.persistentDataPath + "/" + playerName + "-" + taskName + "-" + musicString  + "-" + taskNumber.ToString() + ".csv";
     }
 
     private void Start()
@@ -141,6 +139,11 @@ public class Setting : Singleton<Setting>
         {
             SceneManager.LoadScene("Title");
         }
+    }
+
+    public static Music getCurrentMusic()
+    {
+        return session.tasks[currentTask - 1].music;
     }
 }
 

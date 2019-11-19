@@ -59,7 +59,7 @@ public class CalculationController : Singleton<CalculationController>
 
     public void init()
     {
-        SessionLength = 10;
+        SessionLength = Setting.eachTaskLength;
         gameGoingOn = true;
         curSection = 0;
         initialTime = Time.realtimeSinceStartup;
@@ -69,6 +69,7 @@ public class CalculationController : Singleton<CalculationController>
         streamwriter.WriteLine(DescriptionString);
         streamwriter.WriteLine(OperationDescription);
         audioSource = GetComponent<AudioSource>();
+        MusicController.instance.musicStart();
     }
 
     private void produceProblems()

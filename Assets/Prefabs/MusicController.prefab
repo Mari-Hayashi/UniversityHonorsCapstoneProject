@@ -44,8 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 182f6531f5f84144b8bdab3a0b2be7a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loud_music: {fileID: 8300000, guid: 6c4e5e614e20a75428baee92442cb68b, type: 3}
-  silent_music: {fileID: 8300000, guid: b97225d62b887f34db3e08d74f706624, type: 3}
+  Mozart: {fileID: 8300000, guid: 6c4e5e614e20a75428baee92442cb68b, type: 3}
+  Binaural: {fileID: 8300000, guid: b97225d62b887f34db3e08d74f706624, type: 3}
 --- !u!82 &3585635152769508273
 AudioSource:
   m_ObjectHideFlags: 0

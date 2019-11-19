@@ -2,29 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MusicController : MonoBehaviour
+public class MusicController : Singleton<MusicController>
 {
     private AudioSource audioSource;
     [SerializeField]
-    private AudioClip loud_music;
+    private AudioClip Mozart;
     [SerializeField]
-    private AudioClip silent_music;
+    private AudioClip Binaural;
 
-    void Start()
+    public void musicStart()
     {
-        audioSource = GetComponent<AudioSource>(); // TODO: Fix below
-        /*
-        switch (Setting.m)
+        audioSource = GetComponent<AudioSource>();
+        Music music = Setting.getCurrentMusic();
+        switch (music)
         {
-            case Music.binaural_beat:
-                audioSource.clip = loud_music;
+            case Music.mozart:
+                audioSource.clip = Mozart;
                 audioSource.Play();
                 break;
-            case Music.mozart:
-                audioSource.clip = silent_music;
+            case Music.binaural_beat:
+                audioSource.clip = Binaural;
                 audioSource.Play();
                 break;
         }
-        */
     }
 }
