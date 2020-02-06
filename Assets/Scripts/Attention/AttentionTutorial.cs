@@ -17,6 +17,8 @@ public class AttentionTutorial : MonoBehaviour
     private GameObject sampleApple;
     [SerializeField]
     private GameObject sampleOrange;
+    [SerializeField]
+    private GameObject explanationWithPictures;
 
     [SerializeField]
     private GameObject[] buttons; // 2
@@ -40,7 +42,6 @@ public class AttentionTutorial : MonoBehaviour
 
     private const string TitleStr = "ATTENTION";
     private const string ExplainAppleStr = "Tap Only Red and\nRight Angle\nApples.";
-    private const string ExplainTapOrderStr = "You can only\ntap from top\nto bottom.";
     private const string ExplainOrangeStr = "Next, Tap Only\nUpside down\nOranges.";
     private const string NameEmptyString = "Name cannot be empty.\nType your name.";
     private const string GoodJobApple = "Good Job!";
@@ -56,6 +57,7 @@ public class AttentionTutorial : MonoBehaviour
         currentscreen = currentScreen.Title;
         mainGameObjects.SetActive(false);
         fruits.SetActive(false);
+        explanationWithPictures.SetActive(false);
         audioSource = this.GetComponent<AudioSource>();
         imageSetter = this.GetComponent<ImageSetter>();
 
@@ -67,27 +69,43 @@ public class AttentionTutorial : MonoBehaviour
     {
         switch (currentscreen)
         {
+            case currentScreen.ExplainOrder:
+                explanationWithPictures.SetActive(true);
+                sampleApple.SetActive(false);
+                setPracticeScreenActive(true);
+                buttons[0].SetActive(false);
+                break;
             case currentScreen.ExplainApple:
+                explanationWithPictures.SetActive(false);
+                setPracticeScreenActive(false);
                 explanationTxt.text = ExplainAppleStr;
                 buttonTexts[1].text = "Next";
+                sampleApple.SetActive(true);
                 break;
-            case currentScreen.ExplainOrder:
-                explanationTxt.text = ExplainTapOrderStr;
-                buttonTexts[1].text = "Practice";
-                curButton = -1;
+            case currentScreen.PracticeApple:
+                sampleApple.SetActive(false);
+                setPracticeScreenActive(true);
                 break;
             case currentScreen.ResultApple:
+                imageSetter.displayCircle(-1);
+                setPracticeScreenActive(false);
                 explanationTxt.text = GoodJobApple;
                 buttonTexts[1].text = "OK";
                 break;
             case currentScreen.Explainorange:
                 explanationTxt.text = ExplainOrangeStr;
+                sampleOrange.SetActive(true);
                 buttonTexts[1].text = "Practice";
-                curButton = -1;
+                break;
+            case currentScreen.PracticeOrange:
+                sampleOrange.SetActive(false);
+                setPracticeScreenActive(true);
                 break;
             case currentScreen.ResultOrange:
+                setPracticeScreenActive(false);
                 explanationTxt.text = GoodJobOrange;
                 buttonTexts[1].text = "OK";
+                imageSetter.displayCircle(-1);
                 break;
         }
     }
@@ -104,41 +122,42 @@ public class AttentionTutorial : MonoBehaviour
         buttons[1].SetActive(false);
         StartCoroutine("CountDown");
     }
+
     public void bottomButton()
     {
         audioSource.Play();
         switch (currentscreen)
         {
             case currentScreen.Title:
-                audioSource.Play();
-                currentscreen = currentScreen.ExplainApple;
-                buttons[0].SetActive(false);
-                sampleApple.SetActive(true);
-                changeTexts();
-                break;
-            case currentScreen.ExplainApple:
                 currentscreen = currentScreen.ExplainOrder;
-                changeTexts();
                 break;
             case currentScreen.ExplainOrder:
+                currentscreen = currentScreen.ExplainApple;
+                break;
+            case currentScreen.ExplainApple:
                 currentscreen = currentScreen.PracticeApple;
-                setPracticeScreenActive(true);
+                changeTexts();
+                break;
+            case currentScreen.PracticeApple:
+                currentscreen = currentScreen.ResultApple;
                 break;
             case currentScreen.ResultApple:
                 currentscreen = currentScreen.Explainorange;
-                sampleOrange.SetActive(true);
                 changeTexts();
                 break;
             case currentScreen.Explainorange:
                 currentscreen = currentScreen.PracticeOrange;
-                setPracticeScreenActive(true);
+                break;
+            case currentScreen.PracticeOrange:
+                currentscreen = currentScreen.ResultOrange;
                 break;
             case currentScreen.ResultOrange:
                 StartGame();
-                break;
+                return;
             default:
                 break;
         }
+        changeTexts();
     }
 
     IEnumerator CountDown()
@@ -157,17 +176,9 @@ public class AttentionTutorial : MonoBehaviour
         AttentionController.instance.init();
         this.gameObject.SetActive(false);
     }
-
-    int curButton = -1;
+    
     public void buttonPressed(int i)
     {
-        if (i < curButton)
-        {
-            audioSource.PlayOneShot(boo);
-            return;
-        }
-        curButton = i;
-
         string[] fruits;
         if (currentscreen == currentScreen.PracticeApple) fruits = ApplePractice;
         else fruits = OrangePractice;
@@ -176,24 +187,13 @@ public class AttentionTutorial : MonoBehaviour
         {
             imageSetter.displayCircle(i);
             audioSource.Play();
-            if (i == 6)
-            {
-                StartCoroutine("PracticeEnd");
-            }
-        }
-        else
-        {
-            audioSource.PlayOneShot(boo);
         }
     }
 
-    IEnumerator PracticeEnd()
+    public void endButtonpressed()
     {
-        yield return new WaitForSeconds(1f);
         if (currentscreen == currentScreen.PracticeApple) currentscreen = currentScreen.ResultApple;
         else currentscreen = currentScreen.ResultOrange;
-        setPracticeScreenActive(false);
-        imageSetter.displayCircle(-1);
         changeTexts();
     }
 
@@ -209,12 +209,10 @@ public class AttentionTutorial : MonoBehaviour
             if (currentscreen == currentScreen.PracticeApple)
             {
                 imageSetter.SetImages(ApplePractice);
-                sampleApple.SetActive(false);
             }
-            else
+            else if (currentscreen == currentScreen.PracticeOrange)
             {
                 imageSetter.SetImages(OrangePractice);
-                sampleOrange.SetActive(false);
             }
         }
     }

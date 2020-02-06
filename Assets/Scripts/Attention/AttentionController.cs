@@ -16,7 +16,7 @@ public class AttentionController : Singleton<AttentionController>
     private const string CSVPath = "AttentionProblemSets";
     private List<AttentionQuestion> questionList;
     private const float Duration = 5f; // seconds
-    private int sessionLength; // minutes
+    private int sessionLength = 5; // minutes
     private const float disabledDuration = 0.5f; // seconds.
     private static int curQuestionIndex;
 
@@ -26,16 +26,12 @@ public class AttentionController : Singleton<AttentionController>
 
     private AudioSource audioSource;
 
-    public static bool buttonEnabled;
-
     private static int sessionNum;
     public static string playerName;
     public static bool gameGoingOn;
 
     [SerializeField]
     private AudioClip correct;
-    [SerializeField]
-    private AudioClip wrong;
 
     private const string DescriptionString =
     "Date(MM/DD/YY)," +
@@ -55,7 +51,8 @@ public class AttentionController : Singleton<AttentionController>
     "Sixth image," +
     "Sixth responce time," +
     "Seventh image," +
-    "Seventh responce time";
+    "Seventh responce time," +
+        "Total responce time";
     private const string FruitDescriptionString =
         "00: Red Apple," +
         "01: Green Apple," +
@@ -86,11 +83,12 @@ public class AttentionController : Singleton<AttentionController>
         gameGoingOn = true;
         startSession();
         MusicController.instance.musicStart();
-        StartCoroutine(GameBody());
+        displayQuestion();
     }
 
     private void displayQuestion()
     {
+        timeQuestionBegin = Time.realtimeSinceStartup;
         imageSetter.SetImages(questionList[curQuestionIndex].ImageString);
     }
     private void shuffleQuestions()
@@ -124,29 +122,24 @@ public class AttentionController : Singleton<AttentionController>
         }
         reader.Close();
     }
-    IEnumerator GameBody()
+
+    public void NextButtonPressed()
     {
-        while (true)
+        questionList[curQuestionIndex].totalTimeTaken = (Time.realtimeSinceStartup - timeQuestionBegin);
+        writeCSV();
+        curQuestionIndex++;
+        if (Time.realtimeSinceStartup - timeSessionBegin > sessionLength * 60)
         {
-            timeQuestionBegin = Time.realtimeSinceStartup;
-            buttonEnabled = false;
-            displayQuestion();
-            yield return new WaitForSeconds(disabledDuration);
-            buttonEnabled = true;
-            yield return new WaitForSeconds(Duration - disabledDuration);
-            writeCSV();
-            curQuestionIndex++;
-            if (Time.realtimeSinceStartup - timeSessionBegin > sessionLength * 60)
-            {
-                done();
-                break;
-            }
-            if (curQuestionIndex >= questionList.Count)
-            {
-                startSession();
-            }
+            done();
         }
+        if (curQuestionIndex >= questionList.Count)
+        {
+            startSession();
+        }
+
+        displayQuestion();
     }
+    
     private void startSession()
     {
         sessionNum++;
@@ -159,7 +152,6 @@ public class AttentionController : Singleton<AttentionController>
         questionList[curQuestionIndex].ResponceTime[i] = (Time.realtimeSinceStartup - timeQuestionBegin);
         if (questionList[curQuestionIndex].ImageString[i] == "000" || questionList[curQuestionIndex].ImageString[i] == "101")
             audioSource.PlayOneShot(correct);
-        else audioSource.PlayOneShot(wrong);
     }
     private void done()
     {

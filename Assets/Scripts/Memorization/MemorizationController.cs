@@ -38,7 +38,7 @@ public class MemorizationController : Singleton<MemorizationController>
     private List<MemorizationQuestion> QuestionList;
     private MemorizationQuestion CurrentQuestion;
 
-    private int sessionLength;
+    private int sessionLength = 5;
     private float timeAtBeginningOfSession;
     private float timeAtBeginningOfQuestion;
 

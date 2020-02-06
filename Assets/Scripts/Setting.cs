@@ -30,6 +30,9 @@ public class Setting : Singleton<Setting>
     private Text calculation_button;
     private const string calculation_text = "Calculation";
 
+    [SerializeField]
+    private GameObject loading;
+
     public static Session session;
     public static string playerName;
 
@@ -37,7 +40,7 @@ public class Setting : Singleton<Setting>
 
     AudioSource audioSource;
 
-    public const int eachTaskLength = 1; // minutes
+    public const int eachTaskLength = 10; // minutes
 
     public static string fileName()
     {
@@ -69,6 +72,7 @@ public class Setting : Singleton<Setting>
     {
         audioSource = GetComponent<AudioSource>();
         session = new Session();
+        loading.SetActive(false);
     }
 
     public void MusicButtonPressed(int typeInt)
@@ -124,6 +128,7 @@ public class Setting : Singleton<Setting>
 
     public void OKButtonPressed()
     {
+        loading.SetActive(true);
         audioSource.Play();
         SceneManager.LoadScene("Name");
     }

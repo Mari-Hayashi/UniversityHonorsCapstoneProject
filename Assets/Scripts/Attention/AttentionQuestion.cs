@@ -6,6 +6,7 @@ public class AttentionQuestion : MonoBehaviour
 {
     public string[] ImageString;
     public float[] ResponceTime;
+    public float totalTimeTaken;
     public AttentionQuestion(string[] numbers)
     {
         ImageString = new string[AttentionController.numImages];
@@ -35,6 +36,7 @@ public class AttentionQuestion : MonoBehaviour
         {
             returnString += ImageString[i] + comma + ResponceTime[i] + comma;
         }
+        returnString += totalTimeTaken;
         return returnString;
     }
 }

@@ -45,7 +45,7 @@ public class MemorizationQuestion
             case 0: return "1st";
             case 1: return "2nd";
             case 2: return "3rd";
-            default: return answerIndexInSprites.ToString() + "th";
+            default: return (answerIndexInSprites + 1).ToString() + "th";
         }
     }
     private void shuffleString(string[] array, int size)

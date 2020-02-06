@@ -27,8 +27,6 @@ public class ImageSetter : MonoBehaviour
     private Vector3 rotationVector;
     private Vector3 nonRotationVector;
     private Color transparentColor;
-
-    private int lastPressed;
     
     private void Awake()
     {
@@ -75,19 +73,18 @@ public class ImageSetter : MonoBehaviour
         buttonImages[i].sprite = sprite;
         if (str[2] == '1') buttonTransforms[i].rotation = Quaternion.Euler(rotationVector);
         else buttonTransforms[i].rotation = Quaternion.Euler(nonRotationVector);
-        lastPressed = -1;
     }
+
     public void buttonPressed(int i)
     {
         if (!AttentionController.gameGoingOn)
         {
             SceneManager.LoadScene("Title");
         }
-        if (i <= lastPressed) return;
         displayCircle(i);
-        lastPressed = i;
         AttentionController.instance.buttonPressed(i);
     }
+
     public void displayCircle(int loc)
     {
         if (loc < AttentionController.numImages && loc > -1)
