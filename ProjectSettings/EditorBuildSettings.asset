@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Memorization.unity
     guid: a32d8c745b47e4f4784b98bc77fb4eb6
+  - enabled: 1
+    path: Assets/Scenes/SessionDone.unity
+    guid: 69d989c4cc83c7040b83a47e188e1e44
   m_configObjects: {}

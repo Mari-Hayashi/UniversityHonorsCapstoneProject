@@ -140,9 +140,9 @@ public class Setting : Singleton<Setting>
             SceneManager.LoadScene(session.getSceneName(currentTask));
             currentTask++;
         }
-        else
+        else // Session done.
         {
-            SceneManager.LoadScene("Title");
+            SceneManager.LoadScene("SessionDone");
         }
     }
 
