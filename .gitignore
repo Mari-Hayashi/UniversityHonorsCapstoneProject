@@ -1,0 +1,8 @@
+# Unity Generated Files and Directories
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+sysinfo.txt
+*.stackdump
+Assets/Resources/MSTResources
