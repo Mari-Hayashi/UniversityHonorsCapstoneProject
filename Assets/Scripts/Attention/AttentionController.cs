@@ -160,6 +160,15 @@ public class AttentionController : Singleton<AttentionController>
         gameGoingOn = false;
         Setting.goToNextScene();
     }
+
+    private void TemporarySave()
+    {
+        streamwriter.Flush();
+        streamwriter.Close();
+        fileinfo = new FileInfo(Setting.fileName());
+        streamwriter = fileinfo.AppendText();
+    }
+
     private void writeCSV()
     {
         float timeSinceBeginningOfSession = Time.realtimeSinceStartup - timeSessionBegin;
@@ -176,13 +185,13 @@ public class AttentionController : Singleton<AttentionController>
     private new void OnApplicationQuit()
     {
         Debug.Log("Application is terminated.");
-        done();
+        TemporarySave();
     }
 
     private void OnApplicationPause()
     {
         Debug.Log("Application is terminated.");
-        done();
+        TemporarySave();
     }
 
 }

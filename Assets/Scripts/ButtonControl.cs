@@ -38,4 +38,11 @@ public class ButtonControl : MonoBehaviour
         audioSource.Play();
         SceneManager.LoadScene("Setting");
     }
+
+    public void DataPath()
+    {
+        loading.SetActive(true);
+        audioSource.Play();
+        SceneManager.LoadScene("DataPath");
+    }
 }

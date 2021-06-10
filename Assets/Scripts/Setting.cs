@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 
-public enum Music {no_music = 0, binaural_beat, mozart }
-public enum TaskType { Attention = 0, Memorization, Calculation }
+public enum Music {no_music = 0, binaural_beat, mozart, Max }
+public enum TaskType { Attention = 0, Memorization, Calculation, Max }
 [System.Serializable]
 public class Setting : Singleton<Setting>
 {
@@ -31,10 +31,18 @@ public class Setting : Singleton<Setting>
     private const string calculation_text = "Calculation";
 
     [SerializeField]
+    private GameObject error = null;
+
+    [SerializeField]
+    private Text tutorial_button;
+
+    [SerializeField]
     private GameObject loading;
 
     public static Session session;
     public static string playerName;
+
+    public static bool mandatoryTutorial = false;
 
     public static int currentTask = 0;
 
@@ -73,6 +81,7 @@ public class Setting : Singleton<Setting>
         audioSource = GetComponent<AudioSource>();
         session = new Session();
         loading.SetActive(false);
+        TutorialButtonPressed();
     }
 
     public void MusicButtonPressed(int typeInt)
@@ -114,8 +123,16 @@ public class Setting : Singleton<Setting>
         }
     }
 
+    public void TutorialButtonPressed()
+    {
+        audioSource.Play();
+        mandatoryTutorial = !mandatoryTutorial;
+        tutorial_button.text = "Tutorial: " + ((mandatoryTutorial) ? "Mandatory" : "Not mandatory");
+    }
+
     public void ResetButtonPressed()
     {
+        error.SetActive(false);
         audioSource.Play();
         no_music_button.text = no_music_text;
         binaural_beat_button.text = binaural_beat_text;
@@ -123,11 +140,18 @@ public class Setting : Singleton<Setting>
         attention_button.text = attention_text;
         calculation_button.text = calculation_text;
         memorization_button.text = memorization_text;
+        mandatoryTutorial = true;
+        tutorial_button.text = "Tutorial: " + ((mandatoryTutorial) ? "Mandatory" : "Not mandatory");
         session.Clear();
     }
 
     public void OKButtonPressed()
     {
+        if (!session.Populated())
+        {
+            error.SetActive(true);
+            return;
+        }
         loading.SetActive(true);
         audioSource.Play();
         SceneManager.LoadScene("Name");
@@ -200,6 +224,13 @@ public class Session
         currentMusicIndex++;
     }
 
+    public bool Populated()
+    {
+        if (tasks.Count < 3) return false;
+        if (tasks[2].music == Music.Max || tasks[2].taskType == TaskType.Max) return false;
+        return true;
+    }
+
     public string getSceneName(int taskNumber)
     {
         TaskType type = tasks[taskNumber].taskType;
@@ -222,4 +253,9 @@ public class Task
 {
     public TaskType taskType;
     public Music music;
+    public Task()
+    {
+        taskType = TaskType.Max;
+        music = Music.Max;
+    }
 }

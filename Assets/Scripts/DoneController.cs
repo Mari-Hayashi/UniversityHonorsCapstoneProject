@@ -11,9 +11,19 @@ public class DoneController : MonoBehaviour
     
     void Start()
     {
-        string fileDirectry = Application.persistentDataPath + "/";
-        text.text = "Good job! your training for today is done.\n\nPlease hand the device to RA.\n\nYour record file is generated in: " + fileDirectry;
-    }
+        switch (SceneManager.GetActiveScene().name)
+        {
+            case "DataPath":
+                text.text = "The data file is in the folder:\n\n" + Application.persistentDataPath;
+                break;
+            case "SessionDone":
+                text.text = "Good job! Your training for today is done.\n\nThe data file is outputted to: " + Application.persistentDataPath;
+                break;
+            default:
+                break;
+        }
+        }
+
     public void DoneButtonPressed()
     {
         SceneManager.LoadScene("Title");

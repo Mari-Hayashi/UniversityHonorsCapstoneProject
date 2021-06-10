@@ -33,6 +33,8 @@ public class AttentionTutorial : MonoBehaviour
     private GameObject practiceGameObject_Display;
     [SerializeField]
     private GameObject choiceButtons;
+    [SerializeField]
+    private GameObject sampleBoth;
 
     [SerializeField]
     private AudioClip boo;
@@ -63,6 +65,7 @@ public class AttentionTutorial : MonoBehaviour
 
         buttonTexts = new Text[2];
         for (int i = 0; i < 2; ++i) buttonTexts[i] = buttons[i].GetComponentInChildren<Text>();
+        if (Setting.mandatoryTutorial) buttons[0].SetActive(false);
     }
 
     private void changeTexts()
@@ -74,6 +77,7 @@ public class AttentionTutorial : MonoBehaviour
                 sampleApple.SetActive(false);
                 setPracticeScreenActive(true);
                 buttons[0].SetActive(false);
+                sampleBoth.SetActive(false);
                 break;
             case currentScreen.ExplainApple:
                 explanationWithPictures.SetActive(false);
@@ -106,6 +110,7 @@ public class AttentionTutorial : MonoBehaviour
                 explanationTxt.text = GoodJobOrange;
                 buttonTexts[1].text = "OK";
                 imageSetter.displayCircle(-1);
+                sampleBoth.SetActive(true);
                 break;
         }
     }
@@ -119,6 +124,7 @@ public class AttentionTutorial : MonoBehaviour
     {
         currentscreen = currentScreen.Countdown;
         buttons[0].SetActive(false);
+        sampleBoth.SetActive(false);
         buttons[1].SetActive(false);
         StartCoroutine("CountDown");
     }
@@ -179,6 +185,8 @@ public class AttentionTutorial : MonoBehaviour
     
     public void buttonPressed(int i)
     {
+        if (currentscreen != currentScreen.PracticeApple && currentscreen != currentScreen.PracticeOrange) return;
+
         string[] fruits;
         if (currentscreen == currentScreen.PracticeApple) fruits = ApplePractice;
         else fruits = OrangePractice;

@@ -150,6 +150,13 @@ public class CalculationController : Singleton<CalculationController>
         gameGoingOn = false;
         Setting.goToNextScene();
     }
+    private void TemporaryPause()
+    {
+        streamwriter.Flush();
+        streamwriter.Close();
+        fileinfo = new FileInfo(Setting.fileName());
+        streamwriter = fileinfo.AppendText();
+    }
     /// --------------------- HELPERS ----------------------- ///
     private void produceAdditions()
     {
@@ -279,13 +286,13 @@ public class CalculationController : Singleton<CalculationController>
     private new void OnApplicationQuit()
     {
         Debug.Log("Application is terminated.");
-        done();
+        TemporaryPause();
     }
 
     private void OnApplicationPause()
     {
         Debug.Log("Application is terminated.");
-        done();
+        TemporaryPause();
     }
 
 }

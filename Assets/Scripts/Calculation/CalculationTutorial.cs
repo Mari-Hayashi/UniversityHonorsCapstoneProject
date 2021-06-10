@@ -46,6 +46,8 @@ public class CalculationTutorial : MonoBehaviour
             buttonTexts[i] = buttons[i].GetComponentInChildren<Text>();
         }
         audioSource = GetComponent<AudioSource>();
+
+        if (Setting.mandatoryTutorial) buttons[0].SetActive(false);
     }
     private void setCalculation(int index)
     {

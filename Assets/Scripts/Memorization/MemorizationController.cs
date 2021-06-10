@@ -420,6 +420,17 @@ public class MemorizationController : Singleton<MemorizationController>
         end = true;
         Setting.goToNextScene();
     }
+    private void TemporartPause()
+    {
+        if (streamwriter != null)
+        {
+            streamwriter.Flush();
+            streamwriter.Close();
+
+            fileinfo = new FileInfo(Setting.fileName());
+            streamwriter = fileinfo.AppendText();
+        }
+    }
 
     private void writeOnLog()
     {
@@ -470,12 +481,12 @@ public class MemorizationController : Singleton<MemorizationController>
 
     private new void OnApplicationQuit()
     {
-        done();
+        TemporartPause();
     }
 
     private void OnApplicationPause()
     {
-        done();
+        TemporartPause();
     }
 }
 

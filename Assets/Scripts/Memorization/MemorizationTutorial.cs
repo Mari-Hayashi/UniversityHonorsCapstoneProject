@@ -50,6 +50,7 @@ public class MemorizationTutorial : MonoBehaviour
         buttonTexts = new Text[2];
         for (int i = 0; i < 2; ++i) buttonTexts[i] = buttons[i].GetComponentInChildren<Text>();
         audioSource = GetComponent<AudioSource>();
+        if (Setting.mandatoryTutorial) buttons[0].SetActive(false);
     }
 
     private void changeTexts()
